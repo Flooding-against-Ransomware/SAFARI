@@ -1,0 +1,11 @@
+*.pdf
+TODO.txt
+.vscode/
+.terraform/
+.terraform.lock.hcl
+*.log
+*.backup
+*.zip
+*.7z
+ansible_variables.yml
+*.tfvars

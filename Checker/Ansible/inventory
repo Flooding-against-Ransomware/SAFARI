@@ -1,0 +1,7 @@
+[checker]
+
+[checker:vars]
+ansible_user=checker
+ansible_password=checker
+ansible_become_pass=checker
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'

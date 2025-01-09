@@ -1,0 +1,84 @@
+#/******************************************************************************
+# * Copyright 2021 (C) by Tommaso Compagnucci <tommasocompagnucci1@gmail.com>  *
+# *                                                                            *
+# * This program is free software; you can redistribute it and/or modify       *
+# * it under the terms of the GNU Library General Public License as            *
+# * published by the Free Software Foundation; either version 2 of the         *
+# * License, or (at your option) any later version.                            *
+# *                                                                            *
+# * This program is distributed in the hope that it will be useful,            *
+# * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+# * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+# * GNU General Public License for more details.                               *
+# *                                                                            *
+# * You should have received a copy of the GNU Library General Public          *
+# * License along with this program; if not, write to the                      *
+# * Free Software Foundation, Inc.,                                            *
+# * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.                  *
+# *                                                                            *
+# * For details about the authors of this software, see the AUTHORS file.      *
+# ******************************************************************************/
+
+- hosts: windows
+  tasks:
+
+  - name: Stacca scheda di rete
+    community.windows.win_net_adapter_feature:
+      interface: '*'
+      state: disabled
+      component_id:
+        - ms_tcpip
+        - ms_tcpip6
+        - ms_implat
+        - ms_lltdio
+        - ms_rspndr
+        - ms_lldp
+        - ms_msclient
+        - ms_pacer
+
+  - name: Avvia ranflood daemon
+    ansible.windows.win_command: 
+      argv:
+        - "{{ path_demone_programma_contrasto }}"
+        - "{{ path_settings_ini }}"
+    async: 3600
+    poll: 0
+
+  - name: Snapshot ranflood
+    ansible.windows.win_command:
+      argv:
+        - "{{ path_programma_contrasto }}"
+        - snapshot
+        - take
+        - "{{ strategia_programma_contrasto }}"
+        - "{{ directory_target_programma_constrasto }}"
+    when: "'on-the-fly' in strategia_programma_contrasto or 'shadow_copy' in strategia_programma_contrasto"
+
+  - name: Decomprimi ransomware
+    community.windows.win_unzip:
+      src: "{{ remote_windows_user_directory }}{{ ransomware_name }}"
+      dest: "{{ unzipped_ransomware_destination_path }}"
+      password: infected
+      delete_archive: true
+
+  - name: avvia ransomware
+    ansible.windows.win_command: 
+      argv:
+        - "{{ execution_ransomware_path }}"
+    async: 3600
+    poll: 0   
+
+  - name: Aspetta ranflood client
+    ansible.builtin.pause:
+      seconds: "{{ attesa_programma_contrasto }}"
+
+  - name: Avvia ranflood client
+    ansible.windows.win_command: 
+      argv:
+        - "{{ path_programma_contrasto }}"
+        - flood 
+        - start
+        - "{{ strategia_programma_contrasto }}"
+        - "{{ directory_target_programma_contrasto }}"
+
+  
