@@ -9,4 +9,4 @@ Set Terraform variables in a file with .auto.tfvars extension. Set Ansible varia
 Execute first "infected.sh" and then "checker.sh".
 
 # Useful tips
-Setting the variable `pm_timeout = 600` in the `provider.tf` files (block `provider "proxmox"`) can help during the cloning of machines with big hard drives, especially on slow disks. The cloning can be successful but this timeout breaks scripts, like running sequential tests on a node.
+Setting the variable `pm_timeout = 600` in the `provider.tf` files (block `provider "proxmox"`) can help during the cloning of machines with larger disks --- in particular, if the infrastructure runs on slow hard drives. With shorter timeouts, the cloning can succeed but the delay in waiting for the machine to be ready can break scripts that depend on timings, e.g., running sequential tests on a node.
